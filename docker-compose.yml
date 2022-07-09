@@ -1,0 +1,56 @@
+version: "3.9"
+services:
+  scraper:
+    restart: always
+    build: .
+    environment:
+      APP_ENV: "prod"
+      APP_DEBUG: "False"
+      MONGODB_DATABASE: sourcedb
+      MONGODB_HOSTNAME: mongodb
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: example
+      INFLUXDB_HOSTNAME: influxdb
+      INFLUXDB_BUCKET: crypto_metrics
+      INFLUXDB_ORG: personal
+      INFLUXDB_USERNAME: admin
+      INFLUXDB_PASSWORD: admin12345
+      INFLUXDB_TOKEN: admin-test-token
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - mongodb
+      - influxdb
+  mongodb_container:
+    restart: always
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: sourcedb
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data_container:/data/db
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    ports:
+      - 8086:8086
+    volumes:
+      - influxdb-storage:/var/lib/influxdb2
+      - influxdb-config:/etc/influxdb2
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_BUCKET: crypto_metrics
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: admin12345
+      DOCKER_INFLUXDB_INIT_ORG: personal
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: admin-test-token
+volumes:
+  mongodb_data_container:
+  influxdb-storage:
+  influxdb-config:

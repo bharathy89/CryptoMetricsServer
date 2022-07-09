@@ -1,0 +1,504 @@
+openapi: 3.0.1
+info:
+  title: Crypto Metrics Service
+  description: This is a Simple Service to Store and Query Crypto Metrics.
+  version: 1.0.0
+servers:
+- url: https://localhost:8080/
+- url: https://localhost:8080/
+tags:
+- name: Crypto Metrics App
+  description: Query for Crypto Metrics Data
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+- name: Crypto Metrics Scrapper
+  description: Scrape and Store Crypto Metrics Data
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+paths:
+  /metrics:
+    get:
+      tags:
+      - Crypto Metrics App
+      summary: List all the different metrics
+      operationId: list_metrics
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Metric'
+                x-content-type: application/json
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
+    post:
+      tags:
+      - Crypto Metrics App
+      summary: Add a metric
+      operationId: add_metric
+      requestBody:
+        description: adding a metric
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Metric'
+        required: true
+      responses:
+        "405":
+          description: Invalid input
+          content: {}
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
+  /metrics/{metric_id}:
+    delete:
+      tags:
+      - Crypto Metrics App
+      summary: Deletes a metric
+      operationId: delete_metric
+      parameters:
+      - name: metric_id
+        in: path
+        description: metric id to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Invalid metric_id supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        "404":
+          description: source not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        "405":
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
+  /metrics/{metric_id}/sources:
+    get:
+      tags:
+      - Crypto Metrics App
+      summary: List all sources for the metric
+      operationId: list_metric_sources
+      parameters:
+      - name: metric_id
+        in: path
+        description: metric id to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Source'
+                x-content-type: application/json
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
+  /metrics/{metric_id}/query:
+    post:
+      tags:
+      - Crypto Metrics App
+      summary: List all sources to scrape metrics
+      operationId: query_metrics
+      parameters:
+      - name: metric_id
+        in: path
+        description: metric id to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Query'
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Source'
+                x-content-type: application/json
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
+  /metrics/{metric_id}/monitors:
+    get:
+      tags:
+      - Crypto Metrics App
+      summary: list all monitors for a metric
+      operationId: list_metric_monitors
+      parameters:
+      - name: metric_id
+        in: path
+        description: metric id to monitor
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Monitor'
+                x-content-type: application/json
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
+    post:
+      tags:
+      - Crypto Metrics App
+      summary: set a monitor for a metric
+      operationId: set_metric_monitor
+      parameters:
+      - name: metric_id
+        in: path
+        description: metric id to set monitor
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Monitor'
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monitor'
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
+  /metrics/{metric_id}/monitors/{monitor_id}:
+    get:
+      tags:
+      - Crypto Metrics App
+      summary: deelte a monitor for the metric
+      operationId: delete_metric_monitor
+      parameters:
+      - name: metric_id
+        in: path
+        description: metric id to monitor
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: monitor_id
+        in: path
+        description: metric id to monitor
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Monitor'
+                x-content-type: application/json
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
+  /metrics/rank:
+    get:
+      tags:
+      - Crypto Metrics App
+      summary: List all sources to scrape metrics
+      operationId: rank_metrics
+      parameters:
+      - name: metric_type
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Source'
+                x-content-type: application/json
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
+  /sources:
+    get:
+      tags:
+      - Crypto Metrics Scrapper
+      summary: List all sources to scrape metrics
+      operationId: list_sources
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Source'
+                x-content-type: application/json
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_scrapper_controller
+    post:
+      tags:
+      - Crypto Metrics Scrapper
+      summary: Add a source to scrape metrics
+      operationId: add_source
+      requestBody:
+        description: adding a source to be scraped for metrics.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Source'
+        required: true
+      responses:
+        "405":
+          description: Invalid input
+          content: {}
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_scrapper_controller
+  /sources/{source_id}:
+    get:
+      tags:
+      - Crypto Metrics Scrapper
+      summary: Find source by id
+      description: Returns a source
+      operationId: get_source
+      parameters:
+      - name: source_id
+        in: path
+        description: ID of source to return
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+        "400":
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        "404":
+          description: source not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        "405":
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_scrapper_controller
+    delete:
+      tags:
+      - Crypto Metrics Scrapper
+      summary: Deletes a source
+      operationId: delete_source
+      parameters:
+      - name: source_id
+        in: path
+        description: source id to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        "404":
+          description: source not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        "405":
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_scrapper_controller
+components:
+  schemas:
+    Monitor:
+      type: object
+      properties:
+        monitor_id:
+          type: string
+        metric_id:
+          type: string
+        operand:
+          type: string
+          enum:
+          - greater_than
+          - less_than
+        value:
+          type: number
+          format: float
+        notify_webhook:
+          type: string
+      example:
+        metric_id: metric_id
+        monitor_id: monitor_id
+        notify_webhook: notify_webhook
+        value: 0.8008282
+        operand: ""
+    Query:
+      type: object
+      properties:
+        start_time:
+          type: integer
+          format: int64
+        end_time:
+          type: integer
+          format: int64
+        resolution:
+          type: string
+          enum:
+          - 1h
+          - 1m
+          - 1s
+    Metric:
+      type: object
+      properties:
+        metric_id:
+          type: string
+        metric_type:
+          type: string
+          enum:
+          - asset
+          - pair
+        metric_name:
+          type: string
+        metric_metadata:
+          oneOf:
+          - $ref: '#/components/schemas/Asset'
+          - $ref: '#/components/schemas/Pair'
+      example:
+        metric_metadata: ""
+        metric_id: metric_id
+        metric_name: metric_name
+        metric_type: asset
+    Pair:
+      type: object
+      properties:
+        from_asset:
+          type: string
+        to_asset:
+          type: string
+    Asset:
+      type: object
+      properties:
+        asset:
+          type: string
+    Source:
+      type: object
+      properties:
+        source_id:
+          type: string
+        source_type:
+          type: string
+          enum:
+          - cryptowatch
+        metric_id:
+          type: string
+        last_scrapped_time:
+          type: integer
+          format: int64
+      example:
+        metric_id: metric_id
+        last_scrapped_time: 0
+        source_type: cryptowatch
+        source_id: source_id
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+      example:
+        code: 0
+        message: message
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+      x-apikeyInfoFunc: swagger_server.controllers.authorization_controller.check_api_key
+
