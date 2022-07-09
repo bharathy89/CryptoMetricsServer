@@ -5,7 +5,7 @@ import time as t
 from datetime import datetime
 
 import schedule as schedule
-from swagger_server.custom_logger import custom_logger
+from custom_logger import custom_logger
 from swagger_server.models.source import Source  # noqa: E501
 import requests
 from swagger_server.metrics_store.price_store import PriceStore

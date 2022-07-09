@@ -1,6 +1,6 @@
 import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
-from swagger_server.custom_logger import custom_logger
+from custom_logger import custom_logger
 import os
 from swagger_server.models import Metric
 

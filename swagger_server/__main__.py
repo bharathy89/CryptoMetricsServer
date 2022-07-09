@@ -7,7 +7,7 @@ import connexion
 import pymongo as pymongo
 
 from swagger_server import encoder
-from swagger_server.custom_logger import custom_logger
+from custom_logger import custom_logger
 from swagger_server.scheduler import background_scraper
 
 
