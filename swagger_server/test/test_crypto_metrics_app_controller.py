@@ -23,12 +23,12 @@ class TestCryptoMetricsAppController(BaseTestCase):
         """
         body = Metric()
         response = self.client.open(
-            '//metrics',
-            method='POST',
+            "//metrics",
+            method="POST",
             data=json.dumps(body),
-            content_type='application/json')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+            content_type="application/json",
+        )
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_delete_metric(self):
         """Test case for delete_metric
@@ -36,10 +36,10 @@ class TestCryptoMetricsAppController(BaseTestCase):
         Deletes a metric
         """
         response = self.client.open(
-            '//metrics/{metric_id}'.format(metric_id='metric_id_example'),
-            method='DELETE')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+            "//metrics/{metric_id}".format(metric_id="metric_id_example"),
+            method="DELETE",
+        )
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_delete_metric_monitor(self):
         """Test case for delete_metric_monitor
@@ -47,21 +47,23 @@ class TestCryptoMetricsAppController(BaseTestCase):
         deelte a monitor for the metric
         """
         response = self.client.open(
-            '//metrics/{metric_id}/monitors/{monitor_id}'.format(metric_id='metric_id_example', monitor_id='monitor_id_example'),
-            method='GET')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+            "//monitors/{monitor_id}".format(
+                metric_id="metric_id_example", monitor_id="monitor_id_example"
+            ),
+            method="GET",
+        )
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_list_metric_monitors(self):
         """Test case for list_metric_monitors
 
         list all monitors for a metric
         """
+        query_string = [("metric_id", "metric_id_example")]
         response = self.client.open(
-            '//metrics/{metric_id}/monitors'.format(metric_id='metric_id_example'),
-            method='GET')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+            "//monitors", method="GET", query_string=query_string
+        )
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_list_metric_sources(self):
         """Test case for list_metric_sources
@@ -69,21 +71,18 @@ class TestCryptoMetricsAppController(BaseTestCase):
         List all sources for the metric
         """
         response = self.client.open(
-            '//metrics/{metric_id}/sources'.format(metric_id='metric_id_example'),
-            method='GET')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+            "//metrics/{metric_id}/sources".format(metric_id="metric_id_example"),
+            method="GET",
+        )
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_list_metrics(self):
         """Test case for list_metrics
 
         List all the different metrics
         """
-        response = self.client.open(
-            '//metrics',
-            method='GET')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+        response = self.client.open("//metrics", method="GET")
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_query_metrics(self):
         """Test case for query_metrics
@@ -92,25 +91,23 @@ class TestCryptoMetricsAppController(BaseTestCase):
         """
         body = Query()
         response = self.client.open(
-            '//metrics/{metric_id}/query'.format(metric_id='metric_id_example'),
-            method='POST',
+            "//metrics/{metric_id}/query".format(metric_id="metric_id_example"),
+            method="POST",
             data=json.dumps(body),
-            content_type='application/json')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+            content_type="application/json",
+        )
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_rank_metrics(self):
         """Test case for rank_metrics
 
         List all sources to scrape metrics
         """
-        query_string = [('metric_type', 'metric_type_example')]
+        query_string = [("metric_type", "metric_type_example")]
         response = self.client.open(
-            '//metrics/rank',
-            method='GET',
-            query_string=query_string)
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+            "//metrics/rank", method="GET", query_string=query_string
+        )
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_set_metric_monitor(self):
         """Test case for set_metric_monitor
@@ -119,14 +116,15 @@ class TestCryptoMetricsAppController(BaseTestCase):
         """
         body = Monitor()
         response = self.client.open(
-            '//metrics/{metric_id}/monitors'.format(metric_id='metric_id_example'),
-            method='POST',
+            "//monitors",
+            method="POST",
             data=json.dumps(body),
-            content_type='application/json')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+            content_type="application/json",
+        )
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import unittest
+
     unittest.main()

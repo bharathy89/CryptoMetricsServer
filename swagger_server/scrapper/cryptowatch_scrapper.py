@@ -18,17 +18,18 @@ allowed_list = [
     "btc",
 ]
 
+
 class CryptoWatch(BaseScrapper):
     def __init__(self):
-        self.url="https://api.cryptowat.ch/markets/kraken/{metric}/price?apikey={key}"
+        self.url = "https://api.cryptowat.ch/markets/kraken/{metric}/price?apikey={key}"
 
     def scrape(self, metric: Metric):
 
         if metric.metric_name not in allowed_list:
             raise Exception(
-                "{m} isnt supported by this source".format(m=metric.to_str()))
-        response = requests.get(self.url.format(metric=metric.metric_name,
-                                                key=KEY))
+                "{m} isnt supported by this source".format(m=metric.to_str())
+            )
+        response = requests.get(self.url.format(metric=metric.metric_name, key=KEY))
         if response.ok:
             json_response = json.loads(response.text)
             if "result" in json_response and "price" in json_response["result"]:

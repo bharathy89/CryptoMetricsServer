@@ -154,7 +154,7 @@ paths:
       security:
       - api_key: []
       x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
-  /metrics/{metric_id}/monitors:
+  /monitors:
     get:
       tags:
       - Crypto Metrics App
@@ -162,11 +162,11 @@ paths:
       operationId: list_metric_monitors
       parameters:
       - name: metric_id
-        in: path
+        in: query
         description: metric id to monitor
-        required: true
-        style: simple
-        explode: false
+        required: false
+        style: form
+        explode: true
         schema:
           type: string
       responses:
@@ -187,15 +187,6 @@ paths:
       - Crypto Metrics App
       summary: set a monitor for a metric
       operationId: set_metric_monitor
-      parameters:
-      - name: metric_id
-        in: path
-        description: metric id to set monitor
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
       requestBody:
         content:
           application/json:
@@ -211,7 +202,7 @@ paths:
       security:
       - api_key: []
       x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
-  /metrics/{metric_id}/monitors/{monitor_id}:
+  /monitors/{monitor_id}:
     get:
       tags:
       - Crypto Metrics App

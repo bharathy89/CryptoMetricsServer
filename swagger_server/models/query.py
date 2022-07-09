@@ -14,7 +14,10 @@ class Query(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, start_time: int=None, end_time: int=None, resolution: str=None):  # noqa: E501
+
+    def __init__(
+        self, start_time: int = None, end_time: int = None, resolution: str = None
+    ):  # noqa: E501
         """Query - a model defined in Swagger
 
         :param start_time: The start_time of this Query.  # noqa: E501
@@ -24,23 +27,19 @@ class Query(Model):
         :param resolution: The resolution of this Query.  # noqa: E501
         :type resolution: str
         """
-        self.swagger_types = {
-            'start_time': int,
-            'end_time': int,
-            'resolution': str
-        }
+        self.swagger_types = {"start_time": int, "end_time": int, "resolution": str}
 
         self.attribute_map = {
-            'start_time': 'start_time',
-            'end_time': 'end_time',
-            'resolution': 'resolution'
+            "start_time": "start_time",
+            "end_time": "end_time",
+            "resolution": "resolution",
         }
         self._start_time = start_time
         self._end_time = end_time
         self._resolution = resolution
 
     @classmethod
-    def from_dict(cls, dikt) -> 'Query':
+    def from_dict(cls, dikt) -> "Query":
         """Returns the dict as a model
 
         :param dikt: A dict.

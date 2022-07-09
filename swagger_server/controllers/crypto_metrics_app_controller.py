@@ -1,12 +1,17 @@
+import uuid
+
 import connexion
 import six
 
+from custom_logger import custom_logger
 from swagger_server.models.api_response import ApiResponse  # noqa: E501
 from swagger_server.models.metric import Metric  # noqa: E501
 from swagger_server.models.monitor import Monitor  # noqa: E501
 from swagger_server.models.query import Query  # noqa: E501
 from swagger_server.models.source import Source  # noqa: E501
 from swagger_server import util
+
+logger = custom_logger.get_module_logger(__name__)
 
 
 def add_metric(body):  # noqa: E501
@@ -20,8 +25,11 @@ def add_metric(body):  # noqa: E501
     :rtype: None
     """
     if connexion.request.is_json:
-        body = Metric.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        metric = Metric.from_dict(connexion.request.get_json())  # noqa: E501
+        metric.id = str(uuid.uuid4())
+        metric.save()
+        return metric
+    return ApiResponse(code=400, message="invalid request")
 
 
 def delete_metric(metric_id):  # noqa: E501
@@ -34,7 +42,7 @@ def delete_metric(metric_id):  # noqa: E501
 
     :rtype: None
     """
-    return 'do some magic!'
+    return "do some magic!"
 
 
 def delete_metric_monitor(metric_id, monitor_id):  # noqa: E501
@@ -49,10 +57,10 @@ def delete_metric_monitor(metric_id, monitor_id):  # noqa: E501
 
     :rtype: List[Monitor]
     """
-    return 'do some magic!'
+    return "do some magic!"
 
 
-def list_metric_monitors(metric_id):  # noqa: E501
+def list_metric_monitors(metric_id=None):  # noqa: E501
     """list all monitors for a metric
 
      # noqa: E501
@@ -62,7 +70,8 @@ def list_metric_monitors(metric_id):  # noqa: E501
 
     :rtype: List[Monitor]
     """
-    return 'do some magic!'
+    logger.info(f"fetching monitor for {metric_id}")
+    return Monitor.list(metric_id=metric_id)
 
 
 def list_metric_sources(metric_id):  # noqa: E501
@@ -75,7 +84,8 @@ def list_metric_sources(metric_id):  # noqa: E501
 
     :rtype: List[Source]
     """
-    return 'do some magic!'
+    logger.info(f"fetching sources for {metric_id}")
+    return Source.list(metric_id=metric_id)
 
 
 def list_metrics():  # noqa: E501
@@ -86,7 +96,8 @@ def list_metrics():  # noqa: E501
 
     :rtype: List[Metric]
     """
-    return 'do some magic!'
+    logger.info(f"fetching metrics")
+    return Metric.list()
 
 
 def query_metrics(metric_id, body=None):  # noqa: E501
@@ -96,14 +107,14 @@ def query_metrics(metric_id, body=None):  # noqa: E501
 
     :param metric_id: metric id to delete
     :type metric_id: str
-    :param body: 
+    :param body:
     :type body: dict | bytes
 
     :rtype: List[Source]
     """
     if connexion.request.is_json:
         body = Query.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    return "do some magic!"
 
 
 def rank_metrics(metric_type=None):  # noqa: E501
@@ -111,26 +122,31 @@ def rank_metrics(metric_type=None):  # noqa: E501
 
      # noqa: E501
 
-    :param metric_type: 
+    :param metric_type:
     :type metric_type: str
 
     :rtype: List[Source]
     """
-    return 'do some magic!'
+    return "do some magic!"
 
 
-def set_metric_monitor(metric_id, body=None):  # noqa: E501
+def set_metric_monitor(body=None):  # noqa: E501
     """set a monitor for a metric
 
      # noqa: E501
 
     :param metric_id: metric id to set monitor
-    :type metric_id: str
-    :param body: 
+    :param body:
     :type body: dict | bytes
 
     :rtype: Monitor
     """
     if connexion.request.is_json:
-        body = Monitor.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        monitor = Monitor.from_dict(connexion.request.get_json())  # noqa: E501
+        metric = Metric.load(monitor.metric_id)
+        if not metric:
+            return ApiResponse(code=404, message="metric not found")
+        monitor.id = str(uuid.uuid4())
+        monitor.save()
+        return monitor
+    return ApiResponse(code=400, message="invalid request")

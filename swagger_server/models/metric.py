@@ -6,7 +6,9 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model, get_db
-from swagger_server.models.one_of_metric_metric_metadata import OneOfMetricMetricMetadata  # noqa: F401,E501
+from swagger_server.models.one_of_metric_metric_metadata import (
+    OneOfMetricMetricMetadata,
+)  # noqa: F401,E501
 from swagger_server import util
 
 db = get_db()
@@ -18,7 +20,14 @@ class Metric(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, metric_id: str=None, metric_type: str=None, metric_name: str=None, metric_metadata: OneOfMetricMetricMetadata=None):  # noqa: E501
+
+    def __init__(
+        self,
+        metric_id: str = None,
+        metric_type: str = None,
+        metric_name: str = None,
+        metric_metadata: OneOfMetricMetricMetadata = None,
+    ):  # noqa: E501
         """Metric - a model defined in Swagger
 
         :param metric_id: The metric_id of this Metric.  # noqa: E501
@@ -31,17 +40,17 @@ class Metric(Model):
         :type metric_metadata: OneOfMetricMetricMetadata
         """
         self.swagger_types = {
-            'metric_id': str,
-            'metric_type': str,
-            'metric_name': str,
-            'metric_metadata': OneOfMetricMetricMetadata
+            "metric_id": str,
+            "metric_type": str,
+            "metric_name": str,
+            "metric_metadata": OneOfMetricMetricMetadata,
         }
 
         self.attribute_map = {
-            'metric_id': 'metric_id',
-            'metric_type': 'metric_type',
-            'metric_name': 'metric_name',
-            'metric_metadata': 'metric_metadata'
+            "metric_id": "metric_id",
+            "metric_type": "metric_type",
+            "metric_name": "metric_name",
+            "metric_metadata": "metric_metadata",
         }
         self._metric_id = metric_id
         self._metric_type = metric_type
@@ -49,7 +58,7 @@ class Metric(Model):
         self._metric_metadata = metric_metadata
 
     @classmethod
-    def from_dict(cls, dikt) -> 'Metric':
+    def from_dict(cls, dikt) -> "Metric":
         """Returns the dict as a model
 
         :param dikt: A dict.
@@ -101,8 +110,9 @@ class Metric(Model):
         allowed_values = ["asset", "pair"]  # noqa: E501
         if metric_type not in allowed_values:
             raise ValueError(
-                "Invalid value for `metric_type` ({0}), must be one of {1}"
-                .format(metric_type, allowed_values)
+                "Invalid value for `metric_type` ({0}), must be one of {1}".format(
+                    metric_type, allowed_values
+                )
             )
 
         self._metric_type = metric_type
@@ -167,8 +177,11 @@ class Metric(Model):
         return item
 
     def save(self):
-        res = table.update_one({"metric_id": self.metric_id},
-                               {
-                                   "$set": self.to_dict(),
-                               }, upsert=True)
+        res = table.update_one(
+            {"metric_id": self.metric_id},
+            {
+                "$set": self.to_dict(),
+            },
+            upsert=True,
+        )
         return res

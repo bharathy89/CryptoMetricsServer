@@ -14,18 +14,15 @@ class OneOfMetricMetricMetadata(Model):
 
     Do not edit the class manually.
     """
+
     def __init__(self):  # noqa: E501
-        """OneOfMetricMetricMetadata - a model defined in Swagger
+        """OneOfMetricMetricMetadata - a model defined in Swagger"""
+        self.swagger_types = {}
 
-        """
-        self.swagger_types = {
-        }
-
-        self.attribute_map = {
-        }
+        self.attribute_map = {}
 
     @classmethod
-    def from_dict(cls, dikt) -> 'OneOfMetricMetricMetadata':
+    def from_dict(cls, dikt) -> "OneOfMetricMetricMetadata":
         """Returns the dict as a model
 
         :param dikt: A dict.

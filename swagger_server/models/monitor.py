@@ -18,7 +18,15 @@ class Monitor(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, monitor_id: str=None, metric_id: str=None, operand: str=None, value: float=None, notify_webhook: str=None):  # noqa: E501
+
+    def __init__(
+        self,
+        monitor_id: str = None,
+        metric_id: str = None,
+        operand: str = None,
+        value: float = None,
+        notify_webhook: str = None,
+    ):  # noqa: E501
         """Monitor - a model defined in Swagger
 
         :param monitor_id: The monitor_id of this Monitor.  # noqa: E501
@@ -33,19 +41,19 @@ class Monitor(Model):
         :type notify_webhook: str
         """
         self.swagger_types = {
-            'monitor_id': str,
-            'metric_id': str,
-            'operand': str,
-            'value': float,
-            'notify_webhook': str
+            "monitor_id": str,
+            "metric_id": str,
+            "operand": str,
+            "value": float,
+            "notify_webhook": str,
         }
 
         self.attribute_map = {
-            'monitor_id': 'monitor_id',
-            'metric_id': 'metric_id',
-            'operand': 'operand',
-            'value': 'value',
-            'notify_webhook': 'notify_webhook'
+            "monitor_id": "monitor_id",
+            "metric_id": "metric_id",
+            "operand": "operand",
+            "value": "value",
+            "notify_webhook": "notify_webhook",
         }
         self._monitor_id = monitor_id
         self._metric_id = metric_id
@@ -54,7 +62,7 @@ class Monitor(Model):
         self._notify_webhook = notify_webhook
 
     @classmethod
-    def from_dict(cls, dikt) -> 'Monitor':
+    def from_dict(cls, dikt) -> "Monitor":
         """Returns the dict as a model
 
         :param dikt: A dict.
@@ -173,8 +181,7 @@ class Monitor(Model):
     def list(cls, metric_id="", offset=0, max_number=100) -> list:
         cursor = None
         if metric_id:
-            cursor = table.find({"metric_id": metric_id}).skip(offset).limit(
-                max_number)
+            cursor = table.find({"metric_id": metric_id}).skip(offset).limit(max_number)
         else:
             cursor = table.find().skip(offset).limit(max_number)
 
@@ -192,8 +199,11 @@ class Monitor(Model):
         return item
 
     def save(self):
-        res = table.update_one({"monitor_id": self.monitor_id},
-                               {
-                                   "$set": self.to_dict(),
-                               }, upsert=True)
+        res = table.update_one(
+            {"monitor_id": self.monitor_id},
+            {
+                "$set": self.to_dict(),
+            },
+            upsert=True,
+        )
         return res

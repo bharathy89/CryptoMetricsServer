@@ -14,23 +14,20 @@ class Asset(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, asset: str=None):  # noqa: E501
+
+    def __init__(self, asset: str = None):  # noqa: E501
         """Asset - a model defined in Swagger
 
         :param asset: The asset of this Asset.  # noqa: E501
         :type asset: str
         """
-        self.swagger_types = {
-            'asset': str
-        }
+        self.swagger_types = {"asset": str}
 
-        self.attribute_map = {
-            'asset': 'asset'
-        }
+        self.attribute_map = {"asset": "asset"}
         self._asset = asset
 
     @classmethod
-    def from_dict(cls, dikt) -> 'Asset':
+    def from_dict(cls, dikt) -> "Asset":
         """Returns the dict as a model
 
         :param dikt: A dict.

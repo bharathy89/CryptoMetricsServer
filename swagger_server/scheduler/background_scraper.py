@@ -47,10 +47,10 @@ def background_job():
         logger.info("running the scrapper for %s", source.id)
         try:
             timestamp = datetime.now()
-            value = register[source.source_type].scrape(source.market,
-                                                        source.metric_name)
-            priceClient.add_metric(timestamp, source.market, source.metric_name,
-                                   value)
+            value = register[source.source_type].scrape(
+                source.market, source.metric_name
+            )
+            priceClient.add_metric(timestamp, source.market, source.metric_name, value)
         except Exception as e:
             logger.error(e)
 
@@ -59,4 +59,3 @@ schedule.every(5).seconds.do(background_job)
 
 
 logger.info("adding to schedule")
-

@@ -11,6 +11,6 @@ COPY . /usr/src/app
 
 EXPOSE 8080
 
-ENTRYPOINT ["python3"]
+ENTRYPOINT ["gunicorn"]
 
-CMD ["-m", "swagger_server"]
+CMD ["swagger_server.__main__:app","--timeout","60", "-b", "0.0.0.0:8080", "-w", "1"]

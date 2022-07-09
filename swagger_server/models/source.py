@@ -17,7 +17,14 @@ class Source(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, source_id: str=None, source_type: str=None, metric_id: str=None, last_scrapped_time: int=None):  # noqa: E501
+
+    def __init__(
+        self,
+        source_id: str = None,
+        source_type: str = None,
+        metric_id: str = None,
+        last_scrapped_time: int = None,
+    ):  # noqa: E501
         """Source - a model defined in Swagger
 
         :param source_id: The source_id of this Source.  # noqa: E501
@@ -30,17 +37,17 @@ class Source(Model):
         :type last_scrapped_time: int
         """
         self.swagger_types = {
-            'source_id': str,
-            'source_type': str,
-            'metric_id': str,
-            'last_scrapped_time': int
+            "source_id": str,
+            "source_type": str,
+            "metric_id": str,
+            "last_scrapped_time": int,
         }
 
         self.attribute_map = {
-            'source_id': 'source_id',
-            'source_type': 'source_type',
-            'metric_id': 'metric_id',
-            'last_scrapped_time': 'last_scrapped_time'
+            "source_id": "source_id",
+            "source_type": "source_type",
+            "metric_id": "metric_id",
+            "last_scrapped_time": "last_scrapped_time",
         }
         self._source_id = source_id
         self._source_type = source_type
@@ -48,7 +55,7 @@ class Source(Model):
         self._last_scrapped_time = last_scrapped_time
 
     @classmethod
-    def from_dict(cls, dikt) -> 'Source':
+    def from_dict(cls, dikt) -> "Source":
         """Returns the dict as a model
 
         :param dikt: A dict.
@@ -100,8 +107,9 @@ class Source(Model):
         allowed_values = ["cryptowatch"]  # noqa: E501
         if source_type not in allowed_values:
             raise ValueError(
-                "Invalid value for `source_type` ({0}), must be one of {1}"
-                .format(source_type, allowed_values)
+                "Invalid value for `source_type` ({0}), must be one of {1}".format(
+                    source_type, allowed_values
+                )
             )
 
         self._source_type = source_type
@@ -170,8 +178,11 @@ class Source(Model):
         return item
 
     def save(self):
-        res = table.update_one({"source_id": self.source_id},
-                               {
-                                   "$set": self.to_dict(),
-                               }, upsert=True)
+        res = table.update_one(
+            {"source_id": self.source_id},
+            {
+                "$set": self.to_dict(),
+            },
+            upsert=True,
+        )
         return res

@@ -20,12 +20,12 @@ class TestCryptoMetricsScrapperController(BaseTestCase):
         """
         body = Source()
         response = self.client.open(
-            '//sources',
-            method='POST',
+            "//sources",
+            method="POST",
             data=json.dumps(body),
-            content_type='application/json')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+            content_type="application/json",
+        )
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_delete_source(self):
         """Test case for delete_source
@@ -33,10 +33,10 @@ class TestCryptoMetricsScrapperController(BaseTestCase):
         Deletes a source
         """
         response = self.client.open(
-            '//sources/{source_id}'.format(source_id='source_id_example'),
-            method='DELETE')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+            "//sources/{source_id}".format(source_id="source_id_example"),
+            method="DELETE",
+        )
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_get_source(self):
         """Test case for get_source
@@ -44,23 +44,20 @@ class TestCryptoMetricsScrapperController(BaseTestCase):
         Find source by id
         """
         response = self.client.open(
-            '//sources/{source_id}'.format(source_id='source_id_example'),
-            method='GET')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+            "//sources/{source_id}".format(source_id="source_id_example"), method="GET"
+        )
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_list_sources(self):
         """Test case for list_sources
 
         List all sources to scrape metrics
         """
-        response = self.client.open(
-            '//sources',
-            method='GET')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+        response = self.client.open("//sources", method="GET")
+        self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import unittest
+
     unittest.main()

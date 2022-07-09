@@ -14,7 +14,8 @@ class Pair(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, from_asset: str=None, to_asset: str=None):  # noqa: E501
+
+    def __init__(self, from_asset: str = None, to_asset: str = None):  # noqa: E501
         """Pair - a model defined in Swagger
 
         :param from_asset: The from_asset of this Pair.  # noqa: E501
@@ -22,20 +23,14 @@ class Pair(Model):
         :param to_asset: The to_asset of this Pair.  # noqa: E501
         :type to_asset: str
         """
-        self.swagger_types = {
-            'from_asset': str,
-            'to_asset': str
-        }
+        self.swagger_types = {"from_asset": str, "to_asset": str}
 
-        self.attribute_map = {
-            'from_asset': 'from_asset',
-            'to_asset': 'to_asset'
-        }
+        self.attribute_map = {"from_asset": "from_asset", "to_asset": "to_asset"}
         self._from_asset = from_asset
         self._to_asset = to_asset
 
     @classmethod
-    def from_dict(cls, dikt) -> 'Pair':
+    def from_dict(cls, dikt) -> "Pair":
         """Returns the dict as a model
 
         :param dikt: A dict.

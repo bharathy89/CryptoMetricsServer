@@ -7,7 +7,7 @@ import typing
 
 from swagger_server import util
 
-T = typing.TypeVar('T')
+T = typing.TypeVar("T")
 
 
 class Model(object):
@@ -34,18 +34,20 @@ class Model(object):
         for attr, _ in six.iteritems(self.swagger_types):
             value = getattr(self, attr)
             if isinstance(value, list):
-                result[attr] = list(map(
-                    lambda x: x.to_dict() if hasattr(x, "to_dict") else x,
-                    value
-                ))
+                result[attr] = list(
+                    map(lambda x: x.to_dict() if hasattr(x, "to_dict") else x, value)
+                )
             elif hasattr(value, "to_dict"):
                 result[attr] = value.to_dict()
             elif isinstance(value, dict):
-                result[attr] = dict(map(
-                    lambda item: (item[0], item[1].to_dict())
-                    if hasattr(item[1], "to_dict") else item,
-                    value.items()
-                ))
+                result[attr] = dict(
+                    map(
+                        lambda item: (item[0], item[1].to_dict())
+                        if hasattr(item[1], "to_dict")
+                        else item,
+                        value.items(),
+                    )
+                )
             else:
                 result[attr] = value
 
@@ -70,16 +72,24 @@ class Model(object):
         """Returns true if both objects are not equal"""
         return not self == other
 
+
 def get_db():
     """
     get the mongodb Client
     :return: mongodb client
     """
-    db_name = os.environ['MONGODB_DATABASE']
-    uri = 'mongodb://' + os.environ['MONGODB_USERNAME'] + ':' + \
-          os.environ['MONGODB_PASSWORD'] + '@' + os.environ[
-              'MONGODB_HOSTNAME'] + ':27017/' + os.environ[
-              'MONGODB_DATABASE'] + "?authSource=admin&retryWrites=true&w=majority"
+    db_name = os.environ["MONGODB_DATABASE"]
+    uri = (
+        "mongodb://"
+        + os.environ["MONGODB_USERNAME"]
+        + ":"
+        + os.environ["MONGODB_PASSWORD"]
+        + "@"
+        + os.environ["MONGODB_HOSTNAME"]
+        + ":27017/"
+        + os.environ["MONGODB_DATABASE"]
+        + "?authSource=admin&retryWrites=true&w=majority"
+    )
     client = pymongo.MongoClient(uri)
     db = client[db_name]
     return db
