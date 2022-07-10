@@ -102,7 +102,7 @@ paths:
       parameters:
       - name: metric_id
         in: path
-        description: metric id to delete
+        description: list sources for metric
         required: true
         style: simple
         explode: false
@@ -149,7 +149,32 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Source'
+                  type: number
+                x-content-type: application/json
+      security:
+      - api_key: []
+      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
+  /metrics/rank:
+    get:
+      tags:
+      - Crypto Metrics App
+      summary: List all sources to scrape metrics
+      operationId: rank_metrics
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  maxItems: 2
+                  minItems: 2
+                  type: array
+                  items:
+                    oneOf:
+                    - type: integer
+                    - type: string
                 x-content-type: application/json
       security:
       - api_key: []
@@ -234,25 +259,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Monitor'
-                x-content-type: application/json
-      security:
-      - api_key: []
-      x-openapi-router-controller: swagger_server.controllers.crypto_metrics_app_controller
-  /metrics/rank:
-    get:
-      tags:
-      - Crypto Metrics App
-      summary: List all sources to scrape metrics
-      operationId: rank_metrics
-      responses:
-        "200":
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Source'
                 x-content-type: application/json
       security:
       - api_key: []
@@ -384,7 +390,7 @@ components:
           type: string
         metric_id:
           type: string
-        operand:
+        operator:
           type: string
           enum:
           - greater_than
@@ -399,7 +405,7 @@ components:
         monitor_id: monitor_id
         notify_webhook: notify_webhook
         value: 0.8008282
-        operand: ""
+        operator: ""
     Query:
       type: object
       properties:
@@ -422,6 +428,11 @@ components:
           type: string
         metric_metadata:
           $ref: '#/components/schemas/Pair'
+      example:
+        metric_metadata:
+          from_asset: from_asset
+          to_asset: to_asset
+        metric_id: metric_id
     Pair:
       type: object
       properties:
@@ -430,6 +441,9 @@ components:
         to_asset:
           type: string
       additionalProperties: false
+      example:
+        from_asset: from_asset
+        to_asset: to_asset
     Source:
       type: object
       properties:

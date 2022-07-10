@@ -6,10 +6,11 @@ from datetime import datetime
 
 import schedule as schedule
 from custom_logger import custom_logger
-from swagger_server.models import Metric
+from swagger_server.models import Metric, Monitor
 from swagger_server.models.source import Source  # noqa: E501
 import requests
 from swagger_server.metrics_store.price_store import PriceStore
+from swagger_server.monitor_agent import monitor_evaluator
 from swagger_server.scrapper import register
 
 logger = custom_logger.get_module_logger(__name__)
@@ -40,7 +41,7 @@ def run_continuously(interval=1):
     return cease_continuous_run
 
 
-def background_job():
+def background_scrape_job():
     logger.info("running the scrapper")
     source_list = Source.list()
     priceClient = PriceStore()
@@ -58,7 +59,20 @@ def background_job():
             logger.error(e)
 
 
-schedule.every(5).seconds.do(background_job)
+def background_monitor_job():
+    logger.info("running the scrapper")
+    monitors = Monitor.list()
+    price_store = PriceStore()
+    for monitor in monitors:
+        logger.info("running the monitor for %s", monitor.to_str())
+        try:
+            monitor_evaluator.monitor_eval(price_store, monitor)
+        except Exception as e:
+            logger.error(e)
+
+
+schedule.every(5).seconds.do(background_scrape_job)
+schedule.every().minute.do(background_monitor_job)
 
 
 logger.info("adding to schedule")

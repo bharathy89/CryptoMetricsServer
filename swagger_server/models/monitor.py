@@ -5,12 +5,19 @@ from datetime import date, datetime  # noqa: F401
 
 from typing import List, Dict  # noqa: F401
 
-from swagger_server.models.base_model_ import Model, get_db
-from swagger_server import util
+import requests
 
+from custom_logger import custom_logger
+from swagger_server.models.base_model_ import Model
+from swagger_server import util
+from swagger_server.models.util import get_db
+
+logger = custom_logger.get_module_logger(__name__)
 
 db = get_db()
 table = db["monitors_table"]
+GREATER_THAN = "greater_than"
+LESS_THAN = "less_than"
 
 
 class Monitor(Model):
@@ -23,7 +30,7 @@ class Monitor(Model):
         self,
         monitor_id: str = None,
         metric_id: str = None,
-        operand: str = None,
+        operator: str = None,
         value: float = None,
         notify_webhook: str = None,
     ):  # noqa: E501
@@ -33,8 +40,8 @@ class Monitor(Model):
         :type monitor_id: str
         :param metric_id: The metric_id of this Monitor.  # noqa: E501
         :type metric_id: str
-        :param operand: The operand of this Monitor.  # noqa: E501
-        :type operand: str
+        :param operator: The operator of this Monitor.  # noqa: E501
+        :type operator: str
         :param value: The value of this Monitor.  # noqa: E501
         :type value: float
         :param notify_webhook: The notify_webhook of this Monitor.  # noqa: E501
@@ -43,7 +50,7 @@ class Monitor(Model):
         self.swagger_types = {
             "monitor_id": str,
             "metric_id": str,
-            "operand": str,
+            "operator": str,
             "value": float,
             "notify_webhook": str,
         }
@@ -51,13 +58,13 @@ class Monitor(Model):
         self.attribute_map = {
             "monitor_id": "monitor_id",
             "metric_id": "metric_id",
-            "operand": "operand",
+            "operator": "operator",
             "value": "value",
             "notify_webhook": "notify_webhook",
         }
         self._monitor_id = monitor_id
         self._metric_id = metric_id
-        self._operand = operand
+        self._operator = operator
         self._value = value
         self._notify_webhook = notify_webhook
 
@@ -115,32 +122,32 @@ class Monitor(Model):
         self._metric_id = metric_id
 
     @property
-    def operand(self) -> str:
-        """Gets the operand of this Monitor.
+    def operator(self) -> str:
+        """Gets the operator of this Monitor.
 
 
-        :return: The operand of this Monitor.
+        :return: The operator of this Monitor.
         :rtype: str
         """
-        return self._operand
+        return self._operator
 
-    @operand.setter
-    def operand(self, operand: str):
-        """Sets the operand of this Monitor.
+    @operator.setter
+    def operator(self, operator: str):
+        """Sets the operator of this Monitor.
 
 
-        :param operand: The operand of this Monitor.
-        :type operand: str
+        :param operator: The operator of this Monitor.
+        :type operator: str
         """
-        allowed_values = ["greater_than", "less_than"]  # noqa: E501
-        if operand not in allowed_values:
+        allowed_values = [GREATER_THAN, LESS_THAN]  # noqa: E501
+        if operator not in allowed_values:
             raise ValueError(
-                "Invalid value for `operand` ({0}), must be one of {1}".format(
-                    operand, allowed_values
+                "Invalid value for `operator` ({0}), must be one of {1}".format(
+                    operator, allowed_values
                 )
             )
 
-        self._operand = operand
+        self._operator = operator
 
     @property
     def value(self) -> float:
@@ -183,6 +190,21 @@ class Monitor(Model):
         """
 
         self._notify_webhook = notify_webhook
+
+    def call_webhook(self, metric, message, value):
+        data_map = {
+            "metric": metric,
+            "message": message,
+            "value": value,
+        }
+        response = requests.post(self.notify_webhook, json=data_map)
+        if not response.ok:
+            logger.error(
+                "failed to notify webhook: "
+                + self.to_str()
+                + " \nresponse: "
+                + response.text
+            )
 
     @classmethod
     def list(cls, metric_id="", offset=0, max_number=100) -> list:

@@ -103,10 +103,7 @@ class TestCryptoMetricsAppController(BaseTestCase):
 
         List all sources to scrape metrics
         """
-        query_string = [("metric_type", "metric_type_example")]
-        response = self.client.open(
-            "//metrics/rank", method="GET", query_string=query_string
-        )
+        response = self.client.open("//metrics/rank", method="GET")
         self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
     def test_set_metric_monitor(self):

@@ -78,7 +78,7 @@ def list_metric_sources(metric_id):  # noqa: E501
 
      # noqa: E501
 
-    :param metric_id: metric id to delete
+    :param metric_id: list sources for metric
     :type metric_id: str
 
     :rtype: List[Source]
@@ -109,7 +109,7 @@ def query_metrics(metric_id, body=None):  # noqa: E501
     :param body:
     :type body: dict | bytes
 
-    :rtype: List[Source]
+    :rtype: List[float]
     """
     if connexion.request.is_json:
         query = Query.from_dict(connexion.request.get_json())  # noqa: E501
@@ -134,7 +134,7 @@ def rank_metrics():  # noqa: E501
      # noqa: E501
 
 
-    :rtype: List[Source]
+    :rtype: List[List[Object]]
     """
     metrics = Metric.list()
     price_store = PriceStore()
@@ -152,7 +152,6 @@ def set_metric_monitor(body=None):  # noqa: E501
 
      # noqa: E501
 
-    :param metric_id: metric id to set monitor
     :param body:
     :type body: dict | bytes
 
