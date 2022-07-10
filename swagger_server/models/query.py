@@ -109,5 +109,12 @@ class Query(Model):
         :param resolution: The resolution of this Query.
         :type resolution: str
         """
+        allowed_values = ["1h", "1m", "1s"]  # noqa: E501
+        if resolution not in allowed_values:
+            raise ValueError(
+                "Invalid value for `resolution` ({0}), must be one of {1}".format(
+                    resolution, allowed_values
+                )
+            )
 
         self._resolution = resolution

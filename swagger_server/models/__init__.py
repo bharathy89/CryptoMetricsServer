@@ -5,12 +5,8 @@ from __future__ import absolute_import
 
 # import models into model package
 from swagger_server.models.api_response import ApiResponse
-from swagger_server.models.asset import Asset
 from swagger_server.models.metric import Metric
 from swagger_server.models.monitor import Monitor
-from swagger_server.models.one_of_metric_metric_metadata import (
-    OneOfMetricMetricMetadata,
-)
 from swagger_server.models.pair import Pair
 from swagger_server.models.query import Query
 from swagger_server.models.source import Source

@@ -46,11 +46,11 @@ class TestCryptoMetricsAppController(BaseTestCase):
 
         deelte a monitor for the metric
         """
+        query_string = [("metric_id", "metric_id_example")]
         response = self.client.open(
-            "//monitors/{monitor_id}".format(
-                metric_id="metric_id_example", monitor_id="monitor_id_example"
-            ),
+            "//monitors/{monitor_id}".format(monitor_id="monitor_id_example"),
             method="GET",
+            query_string=query_string,
         )
         self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 

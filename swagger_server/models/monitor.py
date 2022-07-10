@@ -132,6 +132,13 @@ class Monitor(Model):
         :param operand: The operand of this Monitor.
         :type operand: str
         """
+        allowed_values = ["greater_than", "less_than"]  # noqa: E501
+        if operand not in allowed_values:
+            raise ValueError(
+                "Invalid value for `operand` ({0}), must be one of {1}".format(
+                    operand, allowed_values
+                )
+            )
 
         self._operand = operand
 

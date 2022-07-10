@@ -6,9 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model, get_db
-from swagger_server.models.one_of_metric_metric_metadata import (
-    OneOfMetricMetricMetadata,
-)  # noqa: F401,E501
+from swagger_server.models.pair import Pair  # noqa: F401,E501
 from swagger_server import util
 
 db = get_db()
@@ -22,39 +20,22 @@ class Metric(Model):
     """
 
     def __init__(
-        self,
-        metric_id: str = None,
-        metric_type: str = None,
-        metric_name: str = None,
-        metric_metadata: OneOfMetricMetricMetadata = None,
+        self, metric_id: str = None, metric_metadata: Pair = None
     ):  # noqa: E501
         """Metric - a model defined in Swagger
 
         :param metric_id: The metric_id of this Metric.  # noqa: E501
         :type metric_id: str
-        :param metric_type: The metric_type of this Metric.  # noqa: E501
-        :type metric_type: str
-        :param metric_name: The metric_name of this Metric.  # noqa: E501
-        :type metric_name: str
         :param metric_metadata: The metric_metadata of this Metric.  # noqa: E501
-        :type metric_metadata: OneOfMetricMetricMetadata
+        :type metric_metadata: Pair
         """
-        self.swagger_types = {
-            "metric_id": str,
-            "metric_type": str,
-            "metric_name": str,
-            "metric_metadata": OneOfMetricMetricMetadata,
-        }
+        self.swagger_types = {"metric_id": str, "metric_metadata": Pair}
 
         self.attribute_map = {
             "metric_id": "metric_id",
-            "metric_type": "metric_type",
-            "metric_name": "metric_name",
             "metric_metadata": "metric_metadata",
         }
         self._metric_id = metric_id
-        self._metric_type = metric_type
-        self._metric_name = metric_name
         self._metric_metadata = metric_metadata
 
     @classmethod
@@ -90,74 +71,28 @@ class Metric(Model):
         self._metric_id = metric_id
 
     @property
-    def metric_type(self) -> str:
-        """Gets the metric_type of this Metric.
-
-
-        :return: The metric_type of this Metric.
-        :rtype: str
-        """
-        return self._metric_type
-
-    @metric_type.setter
-    def metric_type(self, metric_type: str):
-        """Sets the metric_type of this Metric.
-
-
-        :param metric_type: The metric_type of this Metric.
-        :type metric_type: str
-        """
-        allowed_values = ["asset", "pair"]  # noqa: E501
-        if metric_type not in allowed_values:
-            raise ValueError(
-                "Invalid value for `metric_type` ({0}), must be one of {1}".format(
-                    metric_type, allowed_values
-                )
-            )
-
-        self._metric_type = metric_type
-
-    @property
-    def metric_name(self) -> str:
-        """Gets the metric_name of this Metric.
-
-
-        :return: The metric_name of this Metric.
-        :rtype: str
-        """
-        return self._metric_name
-
-    @metric_name.setter
-    def metric_name(self, metric_name: str):
-        """Sets the metric_name of this Metric.
-
-
-        :param metric_name: The metric_name of this Metric.
-        :type metric_name: str
-        """
-
-        self._metric_name = metric_name
-
-    @property
-    def metric_metadata(self) -> OneOfMetricMetricMetadata:
+    def metric_metadata(self) -> Pair:
         """Gets the metric_metadata of this Metric.
 
 
         :return: The metric_metadata of this Metric.
-        :rtype: OneOfMetricMetricMetadata
+        :rtype: Pair
         """
         return self._metric_metadata
 
     @metric_metadata.setter
-    def metric_metadata(self, metric_metadata: OneOfMetricMetricMetadata):
+    def metric_metadata(self, metric_metadata: Pair):
         """Sets the metric_metadata of this Metric.
 
 
         :param metric_metadata: The metric_metadata of this Metric.
-        :type metric_metadata: OneOfMetricMetricMetadata
+        :type metric_metadata: Pair
         """
 
         self._metric_metadata = metric_metadata
+
+    def metric_name(self):
+        return self._metric_metadata.from_asset + self._metric_metadata.to_asset
 
     @classmethod
     def list(cls, offset=0, max_number=100) -> list:

@@ -27,9 +27,12 @@ def add_source(body):  # noqa: E501
         metric = Metric.load(source.metric_id)
         if not metric:
             return ApiResponse(code=404, message="metric not found")
-        source.id = str(uuid.uuid4())
-        source.save()
-        return source
+        new_source = Source()
+        new_source.source_id = str(uuid.uuid4())
+        new_source.metric_id = metric.metric_id
+        new_source.source_type = source.source_type
+        new_source.save()
+        return new_source
     return ApiResponse(code=400, message="invalid request")
 
 

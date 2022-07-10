@@ -7,32 +7,16 @@ from swagger_server.models.metric import Metric
 # TODO: Ideally fetch from a creds db
 KEY = "0GARP3I5PZ3ESV08N0I0"
 
-# TODO: fetch the allowed values from CryptoWatch itself.
-allowed_list = [
-    "btceur",
-    "btcusd",
-    "btceth",
-    "ethusd",
-    "etheur",
-    "eth",
-    "btc",
-]
-
 
 class CryptoWatch(BaseScrapper):
     def __init__(self):
         self.url = "https://api.cryptowat.ch/markets/kraken/{metric}/price?apikey={key}"
 
     def scrape(self, metric: Metric):
-
-        if metric.metric_name not in allowed_list:
-            raise Exception(
-                "{m} isnt supported by this source".format(m=metric.to_str())
-            )
-        response = requests.get(self.url.format(metric=metric.metric_name, key=KEY))
+        response = requests.get(self.url.format(metric=metric.metric_name(), key=KEY))
         if response.ok:
             json_response = json.loads(response.text)
             if "result" in json_response and "price" in json_response["result"]:
                 price = json_response["result"]["price"]
                 return price
-        raise Exception("failed to fetch metric from CryptoWatch")
+        raise Exception("failed to fetch metric from CryptoWatch : " + response.text)

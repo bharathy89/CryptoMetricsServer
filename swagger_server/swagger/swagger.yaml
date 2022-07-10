@@ -210,11 +210,11 @@ paths:
       operationId: delete_metric_monitor
       parameters:
       - name: metric_id
-        in: path
+        in: query
         description: metric id to monitor
-        required: true
-        style: simple
-        explode: false
+        required: false
+        style: form
+        explode: true
         schema:
           type: string
       - name: monitor_id
@@ -244,14 +244,6 @@ paths:
       - Crypto Metrics App
       summary: List all sources to scrape metrics
       operationId: rank_metrics
-      parameters:
-      - name: metric_type
-        in: query
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
       responses:
         "200":
           description: successful operation
@@ -428,22 +420,8 @@ components:
       properties:
         metric_id:
           type: string
-        metric_type:
-          type: string
-          enum:
-          - asset
-          - pair
-        metric_name:
-          type: string
         metric_metadata:
-          oneOf:
-          - $ref: '#/components/schemas/Asset'
-          - $ref: '#/components/schemas/Pair'
-      example:
-        metric_metadata: ""
-        metric_id: metric_id
-        metric_name: metric_name
-        metric_type: asset
+          $ref: '#/components/schemas/Pair'
     Pair:
       type: object
       properties:
@@ -451,11 +429,7 @@ components:
           type: string
         to_asset:
           type: string
-    Asset:
-      type: object
-      properties:
-        asset:
-          type: string
+      additionalProperties: false
     Source:
       type: object
       properties:

@@ -6,6 +6,7 @@ from datetime import datetime
 
 import schedule as schedule
 from custom_logger import custom_logger
+from swagger_server.models import Metric
 from swagger_server.models.source import Source  # noqa: E501
 import requests
 from swagger_server.metrics_store.price_store import PriceStore
@@ -44,13 +45,15 @@ def background_job():
     source_list = Source.list()
     priceClient = PriceStore()
     for source in source_list:
-        logger.info("running the scrapper for %s", source.id)
+        logger.info("running the scrapper for %s", source.source_id)
+        metric = Metric.load(source.metric_id)
         try:
-            timestamp = datetime.now()
-            value = register[source.source_type].scrape(
-                source.market, source.metric_name
-            )
-            priceClient.add_metric(timestamp, source.market, source.metric_name, value)
+            if metric:
+                timestamp = datetime.now()
+                value = register[source.source_type].scrape(metric)
+                priceClient.add_metric(timestamp, metric, value)
+            else:
+                logger.error("Metric doesnt exist : " + source.metric_id)
         except Exception as e:
             logger.error(e)
 
