@@ -398,6 +398,11 @@ components:
         value:
           type: number
           format: float
+        active:
+          type: boolean
+        last_notified:
+          type: number
+          format: float
         notify_webhook:
           type: string
       example:

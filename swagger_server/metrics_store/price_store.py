@@ -32,8 +32,11 @@ class PriceStore:
         self.write_api.write(bucket=self.bucket, org=self.org, record=p)
 
     def query_price(self, metric: Metric, start_time, end_time, time_interval):
+        end_time_param = ""
+        if end_time:
+            end_time_param = ", stop: {end_time}".format(end_time=end_time)
         query = ' from(bucket:"{bucket}")\
-        |> range(start: {start_time}, stop: {end_time})\
+        |> range(start: {start_time}{end_time_param})\
         |> filter(fn:(r) => r._measurement == "{measurement}")\
         |> filter(fn: (r) => r.metric_name == "{metric_name}")\
         |> filter(fn:(r) => r._field == "price" )\
@@ -41,7 +44,7 @@ class PriceStore:
         |> mean()'.format(
             bucket=self.bucket,
             start_time=start_time,
-            end_time=end_time,
+            end_time_param=end_time_param,
             measurement=CRYPTO_PRICES,
             metric_name=metric.metric_name(),
             time_interval=time_interval,

@@ -1,6 +1,8 @@
 # coding: utf-8
 
 from __future__ import absolute_import
+
+import time
 from datetime import date, datetime  # noqa: F401
 
 from typing import List, Dict  # noqa: F401
@@ -18,6 +20,7 @@ db = get_db()
 table = db["monitors_table"]
 GREATER_THAN = "greater_than"
 LESS_THAN = "less_than"
+NOTIFY_INTERVAL = 10 * 60  # 10 minutes
 
 
 class Monitor(Model):
@@ -32,6 +35,8 @@ class Monitor(Model):
         metric_id: str = None,
         operator: str = None,
         value: float = None,
+        active: bool = None,
+        last_notified: float = None,
         notify_webhook: str = None,
     ):  # noqa: E501
         """Monitor - a model defined in Swagger
@@ -44,6 +49,10 @@ class Monitor(Model):
         :type operator: str
         :param value: The value of this Monitor.  # noqa: E501
         :type value: float
+        :param active: The active of this Monitor.  # noqa: E501
+        :type active: bool
+        :param last_notified: The last_notified of this Monitor.  # noqa: E501
+        :type last_notified: float
         :param notify_webhook: The notify_webhook of this Monitor.  # noqa: E501
         :type notify_webhook: str
         """
@@ -52,6 +61,8 @@ class Monitor(Model):
             "metric_id": str,
             "operator": str,
             "value": float,
+            "active": bool,
+            "last_notified": float,
             "notify_webhook": str,
         }
 
@@ -60,6 +71,8 @@ class Monitor(Model):
             "metric_id": "metric_id",
             "operator": "operator",
             "value": "value",
+            "active": "active",
+            "last_notified": "last_notified",
             "notify_webhook": "notify_webhook",
         }
         self._monitor_id = monitor_id
@@ -171,6 +184,48 @@ class Monitor(Model):
         self._value = value
 
     @property
+    def active(self) -> bool:
+        """Gets the active of this Monitor.
+
+
+        :return: The active of this Monitor.
+        :rtype: bool
+        """
+        return self._active
+
+    @active.setter
+    def active(self, active: bool):
+        """Sets the active of this Monitor.
+
+
+        :param active: The active of this Monitor.
+        :type active: bool
+        """
+
+        self._active = active
+
+    @property
+    def last_notified(self) -> float:
+        """Gets the last_notified of this Monitor.
+
+
+        :return: The last_notified of this Monitor.
+        :rtype: float
+        """
+        return self._last_notified
+
+    @last_notified.setter
+    def last_notified(self, last_notified: float):
+        """Sets the last_notified of this Monitor.
+
+
+        :param last_notified: The last_notified of this Monitor.
+        :type last_notified: float
+        """
+
+        self._last_notified = last_notified
+
+    @property
     def notify_webhook(self) -> str:
         """Gets the notify_webhook of this Monitor.
 
@@ -192,19 +247,24 @@ class Monitor(Model):
         self._notify_webhook = notify_webhook
 
     def call_webhook(self, metric, message, value):
-        data_map = {
-            "metric": metric,
-            "message": message,
-            "value": value,
-        }
-        response = requests.post(self.notify_webhook, json=data_map)
-        if not response.ok:
-            logger.error(
-                "failed to notify webhook: "
-                + self.to_str()
-                + " \nresponse: "
-                + response.text
-            )
+        current_time = time.time()
+        if not self.active or self.last_notified < current_time - NOTIFY_INTERVAL:
+            data_map = {
+                "metric": metric,
+                "message": message,
+                "value": value,
+            }
+            response = requests.post(self.notify_webhook, data=data_map)
+            if not response.ok:
+                logger.error(
+                    "failed to notify webhook: "
+                    + self.to_str()
+                    + " \nresponse: "
+                    + response.text
+                )
+                raise Exception("failed to notify")
+            return current_time
+        return 0
 
     @classmethod
     def list(cls, metric_id="", offset=0, max_number=100) -> list:

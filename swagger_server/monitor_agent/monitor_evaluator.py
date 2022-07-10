@@ -8,14 +8,25 @@ def monitor_eval(price_store: PriceStore, monitor: Monitor):
         results = price_store.query_price(
             metric, start_time="-1m", end_time="", time_interval="1s"
         )
+        triggered = False
+        notified_time = None
         for result in results:
             if monitor.operator == GREATER_THAN and result > monitor.value:
-                monitor.call_webhook(
-                    message="Price spike in the last minute", value=result
+                triggered = True
+                notified_time = monitor.call_webhook(
+                    metric, message="Price spike in the last minute", value=result
                 )
+                break
             if monitor.operator == LESS_THAN and result < monitor.value:
-                monitor.call_webhook(
-                    message="Price drop in the last minute", value=result
+                triggered = True
+                notified_time = monitor.call_webhook(
+                    metric, message="Price drop in the last minute", value=result
                 )
+                break
+        if triggered:
+            if notified_time > 0:
+                monitor.last_notified = notified_time
+        monitor.active = triggered
+        monitor.save()
     else:
         raise Exception("metric doesnt exist : " + monitor.to_str())
