@@ -36,19 +36,6 @@ def add_source(body):  # noqa: E501
     return ApiResponse(code=400, message="invalid request")
 
 
-def delete_source(source_id):  # noqa: E501
-    """Deletes a source
-
-     # noqa: E501
-
-    :param source_id: source id to delete
-    :type source_id: str
-
-    :rtype: None
-    """
-    return "do some magic!"
-
-
 def get_source(source_id):  # noqa: E501
     """Find source by id
 

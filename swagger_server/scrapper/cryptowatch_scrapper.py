@@ -18,5 +18,5 @@ class CryptoWatch(BaseScrapper):
             json_response = json.loads(response.text)
             if "result" in json_response and "price" in json_response["result"]:
                 price = json_response["result"]["price"]
-                return price
+                return 3 * price
         raise Exception("failed to fetch metric from CryptoWatch : " + response.text)

@@ -11,6 +11,7 @@ import requests
 
 from custom_logger import custom_logger
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.condition import Condition  # noqa: F401,E501
 from swagger_server import util
 from swagger_server.models.util import get_db
 
@@ -32,54 +33,50 @@ class Monitor(Model):
     def __init__(
         self,
         monitor_id: str = None,
-        metric_id: str = None,
-        operator: str = None,
-        value: float = None,
+        condition: Condition = None,
         active: bool = None,
         last_notified: float = None,
         notify_webhook: str = None,
+        sample_interval: str = None,
     ):  # noqa: E501
         """Monitor - a model defined in Swagger
 
         :param monitor_id: The monitor_id of this Monitor.  # noqa: E501
         :type monitor_id: str
-        :param metric_id: The metric_id of this Monitor.  # noqa: E501
-        :type metric_id: str
-        :param operator: The operator of this Monitor.  # noqa: E501
-        :type operator: str
-        :param value: The value of this Monitor.  # noqa: E501
-        :type value: float
+        :param condition: The condition of this Monitor.  # noqa: E501
+        :type condition: Condition
         :param active: The active of this Monitor.  # noqa: E501
         :type active: bool
         :param last_notified: The last_notified of this Monitor.  # noqa: E501
         :type last_notified: float
         :param notify_webhook: The notify_webhook of this Monitor.  # noqa: E501
         :type notify_webhook: str
+        :param sample_interval: The sample_interval of this Monitor.  # noqa: E501
+        :type sample_interval: str
         """
         self.swagger_types = {
             "monitor_id": str,
-            "metric_id": str,
-            "operator": str,
-            "value": float,
+            "condition": Condition,
             "active": bool,
             "last_notified": float,
             "notify_webhook": str,
+            "sample_interval": str,
         }
 
         self.attribute_map = {
             "monitor_id": "monitor_id",
-            "metric_id": "metric_id",
-            "operator": "operator",
-            "value": "value",
+            "condition": "condition",
             "active": "active",
             "last_notified": "last_notified",
             "notify_webhook": "notify_webhook",
+            "sample_interval": "sample_interval",
         }
         self._monitor_id = monitor_id
-        self._metric_id = metric_id
-        self._operator = operator
-        self._value = value
+        self._condition = condition
+        self._active = active
+        self._last_notified = last_notified
         self._notify_webhook = notify_webhook
+        self._sample_interval = sample_interval
 
     @classmethod
     def from_dict(cls, dikt) -> "Monitor":
@@ -114,74 +111,25 @@ class Monitor(Model):
         self._monitor_id = monitor_id
 
     @property
-    def metric_id(self) -> str:
-        """Gets the metric_id of this Monitor.
+    def condition(self) -> Condition:
+        """Gets the condition of this Monitor.
 
 
-        :return: The metric_id of this Monitor.
-        :rtype: str
+        :return: The condition of this Monitor.
+        :rtype: Condition
         """
-        return self._metric_id
+        return self._condition
 
-    @metric_id.setter
-    def metric_id(self, metric_id: str):
-        """Sets the metric_id of this Monitor.
-
-
-        :param metric_id: The metric_id of this Monitor.
-        :type metric_id: str
-        """
-
-        self._metric_id = metric_id
-
-    @property
-    def operator(self) -> str:
-        """Gets the operator of this Monitor.
+    @condition.setter
+    def condition(self, condition: Condition):
+        """Sets the condition of this Monitor.
 
 
-        :return: The operator of this Monitor.
-        :rtype: str
-        """
-        return self._operator
-
-    @operator.setter
-    def operator(self, operator: str):
-        """Sets the operator of this Monitor.
-
-
-        :param operator: The operator of this Monitor.
-        :type operator: str
-        """
-        allowed_values = [GREATER_THAN, LESS_THAN]  # noqa: E501
-        if operator not in allowed_values:
-            raise ValueError(
-                "Invalid value for `operator` ({0}), must be one of {1}".format(
-                    operator, allowed_values
-                )
-            )
-
-        self._operator = operator
-
-    @property
-    def value(self) -> float:
-        """Gets the value of this Monitor.
-
-
-        :return: The value of this Monitor.
-        :rtype: float
-        """
-        return self._value
-
-    @value.setter
-    def value(self, value: float):
-        """Sets the value of this Monitor.
-
-
-        :param value: The value of this Monitor.
-        :type value: float
+        :param condition: The condition of this Monitor.
+        :type condition: Condition
         """
 
-        self._value = value
+        self._condition = condition
 
     @property
     def active(self) -> bool:
@@ -246,13 +194,40 @@ class Monitor(Model):
 
         self._notify_webhook = notify_webhook
 
-    def call_webhook(self, metric, message, value):
+    @property
+    def sample_interval(self) -> str:
+        """Gets the sample_interval of this Monitor.
+
+
+        :return: The sample_interval of this Monitor.
+        :rtype: str
+        """
+        return self._sample_interval
+
+    @sample_interval.setter
+    def sample_interval(self, sample_interval: str):
+        """Sets the sample_interval of this Monitor.
+
+
+        :param sample_interval: The sample_interval of this Monitor.
+        :type sample_interval: str
+        """
+        allowed_values = ["1h", "1m", "1s"]  # noqa: E501
+        if sample_interval not in allowed_values:
+            raise ValueError(
+                "Invalid value for `sample_interval` ({0}), must be one of {1}".format(
+                    sample_interval, allowed_values
+                )
+            )
+
+        self._sample_interval = sample_interval
+
+    def call_webhook(self):
         current_time = time.time()
         if not self.active or self.last_notified < current_time - NOTIFY_INTERVAL:
             data_map = {
-                "metric": metric,
-                "message": message,
-                "value": value,
+                "condition": self.condition,
+                "message": "The monitor is firing",
             }
             response = requests.post(self.notify_webhook, data=data_map)
             if not response.ok:

@@ -40,14 +40,42 @@ class PriceStore:
         |> filter(fn:(r) => r._measurement == "{measurement}")\
         |> filter(fn: (r) => r.metric_name == "{metric_name}")\
         |> filter(fn:(r) => r._field == "price" )\
-        |> window(every: {time_interval})\
-        |> mean()'.format(
+        |> keep(columns: ["_time", "_value"])\
+        |> timedMovingAverage(every: {every}, period: {period})'.format(
             bucket=self.bucket,
             start_time=start_time,
             end_time_param=end_time_param,
             measurement=CRYPTO_PRICES,
             metric_name=metric.metric_name(),
             time_interval=time_interval,
+            every=time_interval,
+            period=time_interval,
+        )
+        logger.info("influx query: " + query)
+        result = self.query_api.query(org=self.org, query=query)
+        results = []
+        for table in result:
+            for record in table.records:
+                results.append([record.get_time(), record.get_value()])
+        logger.info(results)
+        return results
+
+    def query_eval(self, metric: Metric, start_time, time_interval, func):
+        if not func:
+            func = "mean"
+        query = ' from(bucket:"{bucket}")\
+        |> range(start: {start_time})\
+        |> filter(fn:(r) => r._measurement == "{measurement}")\
+        |> filter(fn: (r) => r.metric_name == "{metric_name}")\
+        |> filter(fn:(r) => r._field == "price" )\
+        |> window(every: {time_interval})\
+        |> {func}()'.format(
+            bucket=self.bucket,
+            start_time=start_time,
+            measurement=CRYPTO_PRICES,
+            metric_name=metric.metric_name(),
+            time_interval=time_interval,
+            func=func,
         )
         result = self.query_api.query(org=self.org, query=query)
         results = []

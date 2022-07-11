@@ -30,27 +30,24 @@ class TestCryptoMetricsAppController(BaseTestCase):
         )
         self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
-    def test_delete_metric(self):
-        """Test case for delete_metric
+    def test_get_metric(self):
+        """Test case for get_metric
 
-        Deletes a metric
+        Get a metric
         """
         response = self.client.open(
-            "//metrics/{metric_id}".format(metric_id="metric_id_example"),
-            method="DELETE",
+            "//metrics/{metric_id}".format(metric_id="metric_id_example"), method="GET"
         )
         self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
-    def test_delete_metric_monitor(self):
-        """Test case for delete_metric_monitor
+    def test_get_metric_monitor(self):
+        """Test case for get_metric_monitor
 
-        deelte a monitor for the metric
+        Get a monitor
         """
-        query_string = [("metric_id", "metric_id_example")]
         response = self.client.open(
             "//monitors/{monitor_id}".format(monitor_id="monitor_id_example"),
             method="GET",
-            query_string=query_string,
         )
         self.assert200(response, "Response body is : " + response.data.decode("utf-8"))
 
@@ -101,7 +98,7 @@ class TestCryptoMetricsAppController(BaseTestCase):
     def test_rank_metrics(self):
         """Test case for rank_metrics
 
-        List all sources to scrape metrics
+        rank metrics based on stddev
         """
         response = self.client.open("//metrics/rank", method="GET")
         self.assert200(response, "Response body is : " + response.data.decode("utf-8"))

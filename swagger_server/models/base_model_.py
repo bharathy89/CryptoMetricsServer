@@ -1,7 +1,6 @@
 import os
 import pprint
 
-import pymongo
 import six
 import typing
 

@@ -34,29 +34,36 @@ def add_metric(body):  # noqa: E501
     return ApiResponse(code=400, message="invalid request")
 
 
-def delete_metric(metric_id):  # noqa: E501
-    """Deletes a metric
+def get_metric(metric_id):  # noqa: E501
+    """Get a metric
 
      # noqa: E501
 
-    :param metric_id: metric id to delete
+    :param metric_id: metric id to get
     :type metric_id: str
 
-    :rtype: None
+    :rtype: Metric
     """
-    return "do some magic!"
+    metric = Metric.load(metric_id)
+    if metric:
+        return metric
+    return ApiResponse(code=404, message="metric not found")
 
 
-def delete_metric_monitor(monitor_id):  # noqa: E501
-    """deelte a monitor for the metric
+def get_metric_monitor(monitor_id):  # noqa: E501
+    """Get a monitor
 
      # noqa: E501
+
     :param monitor_id: metric id to monitor
     :type monitor_id: str
 
     :rtype: Monitor
     """
-    return "do some magic!"
+    monitor = Monitor.load(monitor_id)
+    if monitor:
+        return monitor
+    return ApiResponse(code=404, message="monitor not found")
 
 
 def list_metric_monitors(metric_id=None):  # noqa: E501
@@ -129,7 +136,7 @@ def query_metrics(metric_id, body=None):  # noqa: E501
 
 
 def rank_metrics():  # noqa: E501
-    """List all sources to scrape metrics
+    """rank metrics based on stddev
 
      # noqa: E501
 
@@ -159,10 +166,9 @@ def set_metric_monitor(body=None):  # noqa: E501
     """
     if connexion.request.is_json:
         monitor = Monitor.from_dict(connexion.request.get_json())  # noqa: E501
-        metric = Metric.load(monitor.metric_id)
-        if not metric:
-            return ApiResponse(code=404, message="metric not found")
-        monitor.monitor_id = str(uuid.uuid4())
+        monitor.monitor = str(uuid.uuid4())
+        monitor.last_notified = 0.0
+        monitor.active = False
         monitor.save()
         return monitor
     return ApiResponse(code=400, message="invalid request")

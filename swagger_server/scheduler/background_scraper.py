@@ -62,17 +62,16 @@ def background_scrape_job():
 def background_monitor_job():
     logger.info("running the scrapper")
     monitors = Monitor.list()
-    price_store = PriceStore()
     for monitor in monitors:
         logger.info("running the monitor for %s", monitor.to_str())
         try:
-            monitor_evaluator.monitor_eval(price_store, monitor)
+            monitor_evaluator.monitor_eval(monitor)
         except Exception as e:
             logger.error(e)
 
 
 schedule.every(5).seconds.do(background_scrape_job)
-schedule.every().minute.do(background_monitor_job)
+schedule.every(5).seconds.do(background_monitor_job)
 
 
 logger.info("adding to schedule")

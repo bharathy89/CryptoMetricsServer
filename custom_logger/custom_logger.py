@@ -14,9 +14,7 @@ def get_module_logger(mod_name):
     """
     logger = logging.getLogger(mod_name)
     handler = logging.StreamHandler()
-    formatter = logging.Formatter(
-        "%(asctime)s [%(name)-12s] %(levelname)-8s %(message)s"
-    )
+    formatter = logging.Formatter('[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s','%m-%d %H:%M:%S')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(logging.DEBUG)
